@@ -43,6 +43,9 @@
             pointer-events: none;
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
+        
+        /* Prevent accidental text selection in the modal */
+        .select-none { user-select: none; }
     </style>
 </head>
 <body class="bg-slate-50 font-main p-4 md:p-8">
@@ -69,25 +72,21 @@
 
             <!-- 4 Target Zones -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <!-- Fear of Illness -->
                 <div id="zone-illness" class="drop-zone p-6 rounded-2xl flex flex-col items-center text-center transition-all group" ondrop="handleDrop(event, 'illness')" ondragover="allowDrop(event)" ondragleave="handleDragLeave(event)">
                     <div class="text-slate-800 font-bold text-lg mb-2">Fear of Illness</div>
                     <div id="count-illness" class="px-3 py-1 bg-slate-200 text-slate-600 rounded-full text-[10px] font-bold uppercase tracking-tighter">0 Items</div>
                 </div>
 
-                <!-- Fear of Being Dismissed -->
                 <div id="zone-dismissed" class="drop-zone p-6 rounded-2xl flex flex-col items-center text-center transition-all group" ondrop="handleDrop(event, 'dismissed')" ondragover="allowDrop(event)" ondragleave="handleDragLeave(event)">
                     <div class="text-slate-800 font-bold text-lg mb-2">Fear of Being Dismissed</div>
                     <div id="count-dismissed" class="px-3 py-1 bg-slate-200 text-slate-600 rounded-full text-[10px] font-bold uppercase tracking-tighter">0 Items</div>
                 </div>
 
-                <!-- Fear of Losing Control -->
                 <div id="zone-control" class="drop-zone p-6 rounded-2xl flex flex-col items-center text-center transition-all group" ondrop="handleDrop(event, 'control')" ondragover="allowDrop(event)" ondragleave="handleDragLeave(event)">
                     <div class="text-slate-800 font-bold text-lg mb-2">Fear of Losing Control</div>
                     <div id="count-control" class="px-3 py-1 bg-slate-200 text-slate-600 rounded-full text-[10px] font-bold uppercase tracking-tighter">0 Items</div>
                 </div>
 
-                <!-- Fear of the System -->
                 <div id="zone-system" class="drop-zone p-6 rounded-2xl flex flex-col items-center text-center transition-all group" ondrop="handleDrop(event, 'system')" ondragover="allowDrop(event)" ondragleave="handleDragLeave(event)">
                     <div class="text-slate-800 font-bold text-lg mb-2">Fear of the System</div>
                     <div id="count-system" class="px-3 py-1 bg-slate-200 text-slate-600 rounded-full text-[10px] font-bold uppercase tracking-tighter">0 Items</div>
@@ -107,7 +106,7 @@
 
     <!-- Modal -->
     <div id="feedback-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay">
-        <div class="bg-white rounded-3xl max-w-lg w-full shadow-2xl overflow-hidden transform transition-all">
+        <div class="bg-white rounded-3xl max-w-lg w-full shadow-2xl overflow-hidden transform transition-all select-none">
             <div class="p-8 md:p-10">
                 <div class="flex items-center gap-4 mb-6">
                     <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center flex-shrink-0">
@@ -118,7 +117,8 @@
                 
                 <p id="modal-bold-text" class="text-slate-800 font-bold text-lg leading-relaxed mb-6"></p>
                 
-                <div class="bg-slate-50 border-l-4 border-blue-500 p-5 rounded-r-xl shadow-inner">
+                <!-- Removed bg-slate-50 and shadow-inner to prevent "highlighted" look -->
+                <div class="bg-white border-l-4 border-blue-500 p-5 rounded-r-xl">
                     <p id="modal-italic-text" class="text-slate-600 italic text-base leading-relaxed font-medium"></p>
                 </div>
 
@@ -131,42 +131,12 @@
 
     <script>
         const scenarios = [
-            { 
-                id: 1, 
-                target: 'illness', 
-                text: "The wait between a test and its results can feel unbearable.", 
-                feedback: "This patient does not need answers yet. They need to feel that someone understands how frightening the not knowing is." 
-            },
-            { 
-                id: 2, 
-                target: 'illness', 
-                text: "This patient has already imagined the worst. They are not being dramatic, they are frightened.", 
-                feedback: "Dismissing the fear will close the conversation. Acknowledging it will open it." 
-            },
-            { 
-                id: 3, 
-                target: 'system', 
-                text: "The frustration is not about the wait. It is about whether anyone is actually keeping track of them.", 
-                feedback: "They need to feel found, not processed." 
-            },
-            { 
-                id: 4, 
-                target: 'control', 
-                text: "Being unwell already strips away control. This patient is fighting to hold onto what little they have left.", 
-                feedback: "Involve them and the resistance softens." 
-            },
-            { 
-                id: 5, 
-                target: 'dismissed', 
-                text: "This patient has been let down before and is braced for it to happen again. They are not making a demand. They are making a plea.", 
-                feedback: "Being heard is the most powerful thing you can offer." 
-            },
-            { 
-                id: 6, 
-                target: 'dismissed', 
-                text: "\"Ever\" is the key word. This is not about today. This is a pattern. They are exhausted by feeling invisible.", 
-                feedback: "Acknowledge that first, before anything else." 
-            }
+            { id: 1, target: 'illness', text: "The wait between a test and its results can feel unbearable.", feedback: "This patient does not need answers yet. They need to feel that someone understands how frightening the not knowing is." },
+            { id: 2, target: 'illness', text: "This patient has already imagined the worst. They are not being dramatic, they are frightened.", feedback: "Dismissing the fear will close the conversation. Acknowledging it will open it." },
+            { id: 3, target: 'system', text: "The frustration is not about the wait. It is about whether anyone is actually keeping track of them.", feedback: "They need to feel found, not processed." },
+            { id: 4, target: 'control', text: "Being unwell already strips away control. This patient is fighting to hold onto what little they have left.", feedback: "Involve them and the resistance softens." },
+            { id: 5, target: 'dismissed', text: "This patient has been let down before and is braced for it to happen again. They are not making a demand. They are making a plea.", feedback: "Being heard is the most powerful thing you can offer." },
+            { id: 6, target: 'dismissed', text: "\"Ever\" is the key word. This is not about today. This is a pattern. They are exhausted by feeling invisible.", feedback: "Acknowledge that first, before anything else." }
         ];
 
         let currentDeck = [...scenarios].sort(() => Math.random() - 0.5);
