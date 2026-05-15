@@ -6,19 +6,29 @@
     <title>Understanding Patient Fears</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        /* Compact layout styles for Mindsmith embed */
+        html, body {
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+            background-color: #f8fafc;
+        }
+        
+        body::-webkit-scrollbar { display: none; }
+        body { -ms-overflow-style: none; scrollbar-width: none; }
+
         .draggable-card {
             cursor: grab;
             transition: transform 0.2s, box-shadow 0.2s;
             touch-action: none;
             user-select: none;
         }
-        .draggable-card:active {
-            cursor: grabbing;
-        }
+        .draggable-card:active { cursor: grabbing; }
+        
         .drop-zone {
             border: 2px dashed #cbd5e1;
             background: #f8fafc;
-            min-height: 200px;
+            min-height: 160px;
         }
         .drop-zone.drag-over {
             border-color: #3b82f6;
@@ -44,63 +54,60 @@
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
         
-        /* Prevent accidental text selection in the modal */
         .select-none { user-select: none; }
     </style>
 </head>
-<body class="bg-slate-50 font-main p-4 md:p-8">
+<body class="font-main p-2 md:p-4">
 
     <div class="max-w-5xl mx-auto">
         <!-- Header -->
-        <div class="bg-[#1e293b] text-white p-6 rounded-t-2xl text-center shadow-xl border-b border-slate-700">
-            <h1 class="text-xl md:text-2xl font-bold mb-2">Drag the top tile to the corresponding fear.</h1>
-            <p class="text-slate-400 italic">Understand the need behind the behavior.</p>
+        <div class="bg-[#1e293b] text-white p-4 rounded-t-2xl text-center shadow-xl border-b border-slate-700">
+            <h1 class="text-lg md:text-xl font-bold mb-1">Drag the top tile to the corresponding fear.</h1>
+            <p class="text-slate-400 italic text-xs">Understand the need behind the behavior.</p>
         </div>
 
-        <!-- Main Board -->
-        <div class="bg-white border-x border-b border-slate-200 rounded-b-2xl p-6 shadow-md">
+        <!-- Sorting Board -->
+        <div class="bg-white border-x border-b border-slate-200 rounded-b-2xl p-4 shadow-md">
             
-            <!-- Source Card -->
-            <div id="source-container" class="flex flex-col items-center mb-10">
-                <div id="active-card-slot" class="w-full max-w-md h-56 flex items-center justify-center border-2 border-slate-100 rounded-2xl bg-slate-50/50 relative p-6">
+            <!-- Card Slot -->
+            <div id="source-container" class="flex flex-col items-center mb-4">
+                <div id="active-card-slot" class="w-full max-w-md h-32 flex items-center justify-center border-2 border-slate-100 rounded-2xl bg-slate-50/50 relative p-4">
                     <!-- Cards injected here -->
                 </div>
-                <div id="deck-counter" class="mt-4 text-xs font-bold text-slate-400 uppercase tracking-widest">
-                    Tiles Remaining: <span id="cards-left">6</span>
+                <div id="deck-counter" class="mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                    Tiles Remaining: <span id="cards-left">7</span>
                 </div>
             </div>
 
             <!-- 4 Target Zones -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div id="zone-illness" class="drop-zone p-6 rounded-2xl flex flex-col items-center text-center transition-all group" ondrop="handleDrop(event, 'illness')" ondragover="allowDrop(event)" ondragleave="handleDragLeave(event)">
-                    <div class="text-slate-800 font-bold text-lg mb-2">Fear of Illness</div>
-                    <div id="count-illness" class="px-3 py-1 bg-slate-200 text-slate-600 rounded-full text-[10px] font-bold uppercase tracking-tighter">0 Items</div>
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                <div id="zone-illness" class="drop-zone p-3 rounded-2xl flex flex-col items-center text-center transition-all group" ondrop="handleDrop(event, 'illness')" ondragover="allowDrop(event)" ondragleave="handleDragLeave(event)">
+                    <div class="text-slate-800 font-bold text-sm mb-1">Fear of Illness</div>
+                    <div id="count-illness" class="px-2 py-0.5 bg-slate-200 text-slate-600 rounded-full text-[9px] font-bold uppercase">0 Items</div>
                 </div>
 
-                <div id="zone-dismissed" class="drop-zone p-6 rounded-2xl flex flex-col items-center text-center transition-all group" ondrop="handleDrop(event, 'dismissed')" ondragover="allowDrop(event)" ondragleave="handleDragLeave(event)">
-                    <div class="text-slate-800 font-bold text-lg mb-2">Fear of Being Dismissed</div>
-                    <div id="count-dismissed" class="px-3 py-1 bg-slate-200 text-slate-600 rounded-full text-[10px] font-bold uppercase tracking-tighter">0 Items</div>
+                <div id="zone-dismissed" class="drop-zone p-3 rounded-2xl flex flex-col items-center text-center transition-all group" ondrop="handleDrop(event, 'dismissed')" ondragover="allowDrop(event)" ondragleave="handleDragLeave(event)">
+                    <div class="text-slate-800 font-bold text-sm mb-1">Fear of Being Dismissed</div>
+                    <div id="count-dismissed" class="px-2 py-0.5 bg-slate-200 text-slate-600 rounded-full text-[9px] font-bold uppercase">0 Items</div>
                 </div>
 
-                <div id="zone-control" class="drop-zone p-6 rounded-2xl flex flex-col items-center text-center transition-all group" ondrop="handleDrop(event, 'control')" ondragover="allowDrop(event)" ondragleave="handleDragLeave(event)">
-                    <div class="text-slate-800 font-bold text-lg mb-2">Fear of Losing Control</div>
-                    <div id="count-control" class="px-3 py-1 bg-slate-200 text-slate-600 rounded-full text-[10px] font-bold uppercase tracking-tighter">0 Items</div>
+                <div id="zone-control" class="drop-zone p-3 rounded-2xl flex flex-col items-center text-center transition-all group" ondrop="handleDrop(event, 'control')" ondragover="allowDrop(event)" ondragleave="handleDragLeave(event)">
+                    <div class="text-slate-800 font-bold text-sm mb-1">Fear of Losing Control</div>
+                    <div id="count-control" class="px-2 py-0.5 bg-slate-200 text-slate-600 rounded-full text-[9px] font-bold uppercase">0 Items</div>
                 </div>
 
-                <div id="zone-system" class="drop-zone p-6 rounded-2xl flex flex-col items-center text-center transition-all group" ondrop="handleDrop(event, 'system')" ondragover="allowDrop(event)" ondragleave="handleDragLeave(event)">
-                    <div class="text-slate-800 font-bold text-lg mb-2">Fear of the System</div>
-                    <div id="count-system" class="px-3 py-1 bg-slate-200 text-slate-600 rounded-full text-[10px] font-bold uppercase tracking-tighter">0 Items</div>
+                <div id="zone-system" class="drop-zone p-3 rounded-2xl flex flex-col items-center text-center transition-all group" ondrop="handleDrop(event, 'system')" ondragover="allowDrop(event)" ondragleave="handleDragLeave(event)">
+                    <div class="text-slate-800 font-bold text-sm mb-1">Fear of the System</div>
+                    <div id="count-system" class="px-2 py-0.5 bg-slate-200 text-slate-600 rounded-full text-[9px] font-bold uppercase">0 Items</div>
                 </div>
             </div>
         </div>
 
-        <!-- Final Message -->
-        <div id="completion-ui" class="hidden mt-8 text-center p-10 bg-white border border-slate-200 rounded-2xl shadow-xl">
-            <h2 class="text-3xl font-black text-slate-800 mb-2">Reflection Complete</h2>
-            <p class="text-slate-600 max-w-md mx-auto mb-6">Acknowledging these fears is the first step toward transforming the patient experience.</p>
-            <button onclick="location.reload()" class="px-8 py-3 bg-[#1e293b] text-white font-bold rounded-xl hover:bg-slate-700 transition shadow-lg">
-                Restart Exercise
-            </button>
+        <!-- Completion UI -->
+        <div id="completion-ui" class="hidden mt-4 text-center p-6 bg-white border border-slate-200 rounded-2xl shadow-xl">
+            <h2 class="text-2xl font-black text-slate-800 mb-1">Reflection Complete</h2>
+            <p class="text-slate-600 text-sm mb-4">Acknowledging these fears is the first step toward transforming the patient experience.</p>
+            <button onclick="location.reload()" class="px-6 py-2 bg-[#1e293b] text-white font-bold rounded-xl hover:bg-slate-700 transition">Restart</button>
         </div>
     </div>
 
@@ -108,21 +115,14 @@
     <div id="feedback-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay">
         <div class="bg-white rounded-3xl max-w-lg w-full shadow-2xl overflow-hidden transform transition-all select-none">
             <div class="p-8 md:p-10">
-                <div class="flex items-center gap-4 mb-6">
-                    <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center flex-shrink-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    </div>
-                    <h3 class="text-xl font-black text-slate-900 tracking-tight">Understanding the Fear</h3>
+                <h3 id="modal-heading" class="text-xl font-black mb-6"></h3>
+                <div id="modal-quote-box" class="bg-white border-l-4 p-5 rounded-r-xl">
+                    <!-- Feedback section -->
+                    <p id="modal-feedback-text" class="text-slate-600 italic text-base leading-relaxed mb-4"></p>
+                    <!-- Message section -->
+                    <p id="modal-message-text" class="text-slate-800 text-base leading-relaxed font-semibold"></p>
                 </div>
-                
-                <p id="modal-bold-text" class="text-slate-800 font-bold text-lg leading-relaxed mb-6"></p>
-                
-                <!-- Removed bg-slate-50 and shadow-inner to prevent "highlighted" look -->
-                <div class="bg-white border-l-4 border-blue-500 p-5 rounded-r-xl">
-                    <p id="modal-italic-text" class="text-slate-600 italic text-base leading-relaxed font-medium"></p>
-                </div>
-
-                <button onclick="closeModal()" class="mt-8 w-full py-4 bg-[#1e293b] text-white font-bold rounded-2xl hover:bg-slate-800 transition shadow-lg">
+                <button onclick="closeModal()" class="mt-8 w-full py-3 bg-[#1e293b] text-white font-bold rounded-2xl hover:bg-slate-800 transition shadow-lg">
                     Next Scenario
                 </button>
             </div>
@@ -131,12 +131,62 @@
 
     <script>
         const scenarios = [
-            { id: 1, target: 'illness', text: "The wait between a test and its results can feel unbearable.", feedback: "This patient does not need answers yet. They need to feel that someone understands how frightening the not knowing is." },
-            { id: 2, target: 'illness', text: "This patient has already imagined the worst. They are not being dramatic, they are frightened.", feedback: "Dismissing the fear will close the conversation. Acknowledging it will open it." },
-            { id: 3, target: 'system', text: "The frustration is not about the wait. It is about whether anyone is actually keeping track of them.", feedback: "They need to feel found, not processed." },
-            { id: 4, target: 'control', text: "Being unwell already strips away control. This patient is fighting to hold onto what little they have left.", feedback: "Involve them and the resistance softens." },
-            { id: 5, target: 'dismissed', text: "This patient has been let down before and is braced for it to happen again. They are not making a demand. They are making a plea.", feedback: "Being heard is the most powerful thing you can offer." },
-            { id: 6, target: 'dismissed', text: "\"Ever\" is the key word. This is not about today. This is a pattern. They are exhausted by feeling invisible.", feedback: "Acknowledge that first, before anything else." }
+            { 
+                id: 1, 
+                target: 'illness', 
+                heading: 'Fear of illness',
+                text: "I just need to know the worst. Whatever it is, just tell me.", 
+                feedback: "This patient has already imagined the worst. They are not being dramatic. They are frightened.",
+                message: "Acknowledging the fear will open the conversation. Dismissing it will close it."
+            },
+            { 
+                id: 2, 
+                target: 'illness', 
+                heading: 'Fear of illness',
+                text: "I have not slept properly in a week waiting for these results.", 
+                feedback: "The wait can feel unbearable. This patient does not need answers yet. They need someone to understand how frightening the not knowing is.",
+                message: "Sit with them in the uncertainty before you reach for solutions."
+            },
+            { 
+                id: 3, 
+                target: 'control', 
+                heading: 'Fear of losing control',
+                text: "Can you tell me exactly what happens next and who will be involved?", 
+                feedback: "Being unwell strips away control. This patient is fighting to hold on to what they have left.",
+                message: "Involve them in what comes next and the resistance softens."
+            },
+            { 
+                id: 4, 
+                target: 'system', 
+                heading: 'Fear of the system',
+                text: "I have told three different people the same thing. Why does nobody seem to put this information on my record?", 
+                feedback: "This is not about admin. It is about whether anyone is truly keeping track of them.",
+                message: "They need to feel found, not processed."
+            },
+            { 
+                id: 5, 
+                target: 'system', 
+                heading: 'Fear of the system',
+                text: "I have mentioned this three times now. Do you ever recorded our conversations properly?", 
+                feedback: "This is about trust. The repetition tells you their confidence in the system is low.",
+                message: "Showing them someone is paying attention matters more than explaining the process."
+            },
+            { 
+                id: 6, 
+                target: 'dismissed', 
+                heading: 'Fear of being dismissed',
+                text: "I have been saying something was wrong for months. Nobody ever takes me seriously.", 
+                feedback: "'Ever' is the keyword. This is a pattern, not a moment. They are exhausted by feeling invisible.",
+                message: "Acknowledge the pattern first, before anything else."
+            },
+            { 
+                id: 7, 
+                target: 'dismissed', 
+                heading: 'Fear of being dismissed',
+                text: "I just hope this time someone actually follows through.", 
+                feedback: "This patient has been let down before and is braced for it to happen again. They are not making a demand. They are making a plea.",
+                message: "Being heard is the most powerful thing you can offer."
+            }
         ];
 
         let currentDeck = [...scenarios].sort(() => Math.random() - 0.5);
@@ -150,7 +200,7 @@
             counterLabel.innerText = currentDeck.length;
             
             if (currentDeck.length === 0) {
-                container.innerHTML = '<div class="text-slate-400 font-medium">All Fears Mapped</div>';
+                container.innerHTML = '<div class="text-slate-400 font-medium text-sm">All fears identified</div>';
                 document.getElementById('deck-counter').classList.add('hidden');
                 document.getElementById('completion-ui').classList.remove('hidden');
                 return;
@@ -158,7 +208,7 @@
 
             activeCard = currentDeck[0];
             const cardEl = document.createElement('div');
-            cardEl.className = 'draggable-card w-full h-full bg-white shadow-xl border border-slate-200 rounded-2xl p-6 flex items-center justify-center text-center font-bold text-slate-800 text-lg md:text-xl transition-all duration-300';
+            cardEl.className = 'draggable-card w-full h-full bg-white shadow-xl border border-slate-200 rounded-2xl p-4 flex items-center justify-center text-center font-bold text-slate-800 text-sm md:text-base transition-all duration-300';
             cardEl.draggable = true;
             cardEl.innerText = activeCard.text;
             cardEl.id = "card-" + activeCard.id;
@@ -198,7 +248,7 @@
             if (zoneType === activeCard.target) {
                 counts[zoneType]++;
                 document.getElementById(`count-${zoneType}`).innerText = `${counts[zoneType]} Item${counts[zoneType] > 1 ? 's' : ''}`;
-                showFeedback(activeCard);
+                showFeedback(activeCard, zoneType);
                 currentDeck.shift();
                 renderNextCard();
             } else {
@@ -208,9 +258,25 @@
             }
         }
 
-        function showFeedback(card) {
-            document.getElementById('modal-bold-text').innerText = card.text;
-            document.getElementById('modal-italic-text').innerText = `"${card.feedback}"`;
+        function showFeedback(card, zoneType) {
+            const heading = document.getElementById('modal-heading');
+            const feedbackText = document.getElementById('modal-feedback-text');
+            const messageText = document.getElementById('modal-message-text');
+            const quoteBox = document.getElementById('modal-quote-box');
+
+            heading.innerText = card.heading;
+            feedbackText.innerText = card.feedback;
+            messageText.innerText = card.message;
+            
+            let color = "blue";
+            if(zoneType === "illness") color = "red";
+            if(zoneType === "dismissed") color = "amber";
+            if(zoneType === "control") color = "green";
+            if(zoneType === "system") color = "blue";
+
+            heading.className = `text-xl font-black mb-6 text-${color}-600 uppercase tracking-tight`;
+            quoteBox.className = `bg-white border-l-4 border-${color}-500 p-5 rounded-r-xl`;
+            
             document.getElementById('feedback-modal').classList.remove('hidden');
         }
 
@@ -230,10 +296,10 @@
             const touch = e.touches[0];
             const card = e.currentTarget;
             card.style.position = 'fixed';
-            card.style.width = '85vw';
-            card.style.maxWidth = '360px';
-            card.style.left = (touch.clientX - (parseInt(card.style.width)/2 || 180)) + 'px';
-            card.style.top = (touch.clientY - 60) + 'px';
+            card.style.width = '80vw';
+            card.style.maxWidth = '300px';
+            card.style.left = (touch.clientX - (parseInt(card.style.width)/2 || 150)) + 'px';
+            card.style.top = (touch.clientY - 40) + 'px';
             card.style.zIndex = 1000;
         }
         function handleTouchEnd(e) {
@@ -241,12 +307,12 @@
             const touch = e.changedTouches[0];
             const zones = ['illness', 'dismissed', 'control', 'system'];
             let dropped = false;
-
+            
             card.classList.remove('touch-dragging');
             card.style.position = 'static';
             card.style.zIndex = 1;
             card.style.width = '100%';
-
+            
             for(let z of zones) {
                 const rect = document.getElementById(`zone-${z}`).getBoundingClientRect();
                 if (touch.clientX > rect.left && touch.clientX < rect.right && touch.clientY > rect.top && touch.clientY < rect.bottom) {
@@ -255,7 +321,6 @@
                     break;
                 }
             }
-
             if (!dropped) renderNextCard(); 
         }
 
